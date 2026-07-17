@@ -6,6 +6,8 @@ A short-term University end-to-end Healthcare Data Science Project to curate dat
 
 Patient data is obtained from de-identified Electronic Health Records (EHRs) in the MIMIC-IV healthcare database, and is stored in BigQuery, where SQL queries and exports were also done. 
 
+## [View Our Group Project Interactively Here](https://keithzyyy.github.io/comp90089-healthcare-project/chd_readmission_explorer.html)
+
 
 ## Key files and folders
 
