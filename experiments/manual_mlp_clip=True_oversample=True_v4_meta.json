@@ -1,0 +1,1452 @@
+{
+  "best_val_pr_auc": 0.20656526987631862,
+  "best_params": {
+    "neurons": [
+      256,
+      128,
+      64
+    ],
+    "activation_name": "leaky_relu",
+    "bn": true,
+    "dropout": 0.2,
+    "optimizer": "adam",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "reg_type": "l1_l2",
+    "reg_l1": 0.0001,
+    "reg_l2": 0.0001,
+    "batch_size": 450,
+    "epochs": 500
+  },
+  "runs": [
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19105692494417234,
+      "best_epoch": 2
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16068254265735799,
+      "best_epoch": 9
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15969749260807542,
+      "best_epoch": 18
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.153214019600493,
+      "best_epoch": 35
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.18210948561221646,
+      "best_epoch": 10
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15956100368086593,
+      "best_epoch": 2
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15306614380250044,
+      "best_epoch": 4
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1637824783473096,
+      "best_epoch": 3
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16638112073996877,
+      "best_epoch": 5
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15297664198732538,
+      "best_epoch": 8
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16762692847022648,
+      "best_epoch": 10
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16231195749715457,
+      "best_epoch": 14
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15182849724413233,
+      "best_epoch": 6
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17921557515847458,
+      "best_epoch": 9
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15900129900132112,
+      "best_epoch": 4
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1499198534017899,
+      "best_epoch": 18
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17156289338960135,
+      "best_epoch": 4
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17437305983962936,
+      "best_epoch": 13
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17183443484211666,
+      "best_epoch": 37
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16055935927034765,
+      "best_epoch": 4
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16741677312639136,
+      "best_epoch": 6
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15856707152792637,
+      "best_epoch": 16
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16745632793792145,
+      "best_epoch": 12
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1540897753655469,
+      "best_epoch": 5
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.18300966703002203,
+      "best_epoch": 2
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17841905993309465,
+      "best_epoch": 13
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1785311283239482,
+      "best_epoch": 23
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1659216310424608,
+      "best_epoch": 5
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15750094444447976,
+      "best_epoch": 15
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17853868507427278,
+      "best_epoch": 19
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1930343952117364,
+      "best_epoch": 34
+    },
+    {
+      "params": {
+        "neurons": [
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.18968747348455528,
+      "best_epoch": 49
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1532146228289376,
+      "best_epoch": 1
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19297087096068166,
+      "best_epoch": 1
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17520588786013375,
+      "best_epoch": 23
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.151429870498204,
+      "best_epoch": 2
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19749226556886815,
+      "best_epoch": 22
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17936600598547436,
+      "best_epoch": 1
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1863627025239484,
+      "best_epoch": 31
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1719809942094443,
+      "best_epoch": 9
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19189817773372106,
+      "best_epoch": 8
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19340242196586827,
+      "best_epoch": 3
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17870585745560222,
+      "best_epoch": 8
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16764920964351032,
+      "best_epoch": 7
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19397997008602522,
+      "best_epoch": 6
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.165316807693134,
+      "best_epoch": 2
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1651646125429847,
+      "best_epoch": 11
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16266059168809738,
+      "best_epoch": 22
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17937481344034453,
+      "best_epoch": 26
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17194152291166537,
+      "best_epoch": 3
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.15177988351419291,
+      "best_epoch": 10
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17675149520474231,
+      "best_epoch": 3
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17054215860668778,
+      "best_epoch": 23
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19265078163555566,
+      "best_epoch": 3
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17736221837523608,
+      "best_epoch": 25
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.20656526987631862,
+      "best_epoch": 19
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16213313667350698,
+      "best_epoch": 13
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1825843998146988,
+      "best_epoch": 16
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16763857093377496,
+      "best_epoch": 11
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.19478768879756483,
+      "best_epoch": 7
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.16709561091459102,
+      "best_epoch": 36
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 1e-06,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.17810836396785504,
+      "best_epoch": 7
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 1e-06,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.1582906385331867,
+      "best_epoch": 39
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.3,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "weight_decay": 0.0001,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "batch_size": 450,
+        "epochs": 500
+      },
+      "val_pr_auc": 0.18007379200386517,
+      "best_epoch": 1
+    }
+  ],
+  "numeric_cols": [
+    "age",
+    "cci",
+    "myocardial_infarct",
+    "congestive_heart_failure",
+    "peripheral_vascular_disease",
+    "cerebrovascular_disease",
+    "dementia",
+    "chronic_pulmonary_disease",
+    "rheumatic_disease",
+    "peptic_ulcer_disease",
+    "mild_liver_disease",
+    "diabetes_without_cc",
+    "diabetes_with_cc",
+    "paraplegia",
+    "renal_disease",
+    "malignant_cancer",
+    "severe_liver_disease",
+    "metastatic_solid_tumor",
+    "aids",
+    "first_day_sofa",
+    "apsiii_score",
+    "oasis_score",
+    "heart_rate_mean",
+    "sbp_mean",
+    "dbp_mean",
+    "mbp_mean",
+    "resp_rate_mean",
+    "temperature_mean",
+    "spo2_mean",
+    "glucose_mean",
+    "creatinine_last_24h",
+    "bun_last_24h",
+    "sodium_last_24h",
+    "potassium_last_24h",
+    "glucose_last_24h",
+    "hemoglobin_last_24h",
+    "wbc_last_24h",
+    "lactate_last_24h",
+    "troponin_last_24h",
+    "n_prior_icu_stays"
+  ],
+  "categorical_cols": [
+    "gender",
+    "race",
+    "admission_type",
+    "insurance",
+    "language",
+    "marital_status",
+    "cohort"
+  ],
+  "want_IQR_clipping": true,
+  "want_oversample": true
+}

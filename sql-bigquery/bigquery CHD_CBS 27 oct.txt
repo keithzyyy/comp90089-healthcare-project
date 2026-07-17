@@ -1,0 +1,261 @@
+-- ===========================
+-- Config (optional constants)
+-- ===========================
+DECLARE lower_gap_hours INT64 DEFAULT 24;         -- exclude <24h to avoid unit transfers/leakage
+DECLARE upper_gap_days  INT64 DEFAULT 30;         -- 30-day readmission window
+
+-- =========================================================
+-- 1) Identify CABG hospital admissions from procedure codes
+--    NOTE: ICD-9 may be stored without dots (e.g., 36.15 -> 3615)
+-- =========================================================
+WITH cabg_procs AS (
+  SELECT DISTINCT
+    subject_id,
+    hadm_id,
+    icd_version,
+    icd_code
+  FROM `physionet-data.mimiciv_3_1_hosp.procedures_icd`
+  WHERE
+    (
+      icd_version = 9
+      AND (
+        REGEXP_CONTAINS(icd_code, r'^361[0-9]$')  -- 36.10–36.19
+        OR REGEXP_CONTAINS(icd_code, r'^362$')    -- 36.2
+      )
+    )
+    OR
+    (
+      icd_version = 10
+      AND REGEXP_CONTAINS(icd_code, r'^021[0-3]') -- 0210xxx–0213xxx
+    )
+),
+cabg_admissions AS (
+  SELECT DISTINCT subject_id, hadm_id
+  FROM cabg_procs
+),
+
+-- =============================================
+-- 2) ICU stays for those CABG admissions
+-- =============================================
+cabg_icustays AS (
+  SELECT i.subject_id, i.hadm_id, i.stay_id, i.intime, i.outtime
+  FROM `physionet-data.mimiciv_3_1_icu.icustays` AS i
+  JOIN cabg_admissions AS c
+    USING (subject_id, hadm_id)
+),
+
+-- ==========================================================
+-- 3) Label 30-day ICU readmission per subject (leakage-aware)
+--    y = 1  if 24h <= next_intime - outtime <= 30 days
+-- ==========================================================
+ordered AS (
+  SELECT
+    subject_id, hadm_id, stay_id, intime, outtime,
+    LEAD(intime) OVER (PARTITION BY subject_id ORDER BY intime) AS next_intime
+  FROM cabg_icustays
+),
+labeled AS (
+  SELECT
+    subject_id, hadm_id, stay_id, intime, outtime,
+    CASE
+      WHEN next_intime IS NOT NULL
+        AND next_intime > outtime
+        AND DATETIME_DIFF(next_intime, outtime, HOUR) >= lower_gap_hours
+        AND DATETIME_DIFF(next_intime, outtime, DAY)  <= upper_gap_days
+      THEN 1 ELSE 0
+    END AS y
+  FROM ordered
+),
+
+-- =============================================
+-- 4) Demographics (patients/admissions)
+-- =============================================
+demo AS (
+  SELECT
+    l.subject_id, l.hadm_id, l.stay_id, l.intime, l.outtime, l.y,
+    p.gender,
+    p.anchor_age         AS age,
+    p.anchor_year_group  AS year_group,
+    a.admission_type,
+    a.insurance,
+    a.language,
+    a.marital_status,
+    a.race,
+    a.discharge_location
+  FROM labeled AS l
+  LEFT JOIN `physionet-data.mimiciv_3_1_hosp.patients`   AS p USING (subject_id)
+  LEFT JOIN `physionet-data.mimiciv_3_1_hosp.admissions` AS a USING (subject_id, hadm_id)
+),
+
+-- =============================================
+-- 5) Comorbidities (Charlson, by hadm_id)
+-- =============================================
+demo_comorb AS (
+  SELECT
+    d.*,
+    c.charlson_comorbidity_index AS charlson_comorbidity_index,
+    c.age_score,
+    c.myocardial_infarct,
+    c.congestive_heart_failure,
+    c.peripheral_vascular_disease,
+    c.cerebrovascular_disease,
+    c.dementia,
+    c.chronic_pulmonary_disease,
+    c.rheumatic_disease,
+    c.peptic_ulcer_disease,
+    c.mild_liver_disease,
+    c.diabetes_without_cc,
+    c.diabetes_with_cc,
+    c.paraplegia,
+    c.renal_disease,
+    c.malignant_cancer,
+    c.severe_liver_disease,
+    c.metastatic_solid_tumor,
+    c.aids
+  FROM demo AS d
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.charlson` AS c
+    USING (subject_id, hadm_id)
+),
+
+-- =============================================
+-- 6) Severity scores (first 24h by stay_id)
+-- =============================================
+demo_comorb_severity AS (
+  SELECT
+    dc.*,
+    fs.sofa    AS first_day_sofa,
+    ap.apsiii  AS apsiii_score,
+    ld.lods    AS lods_score,
+    os.oasis   AS oasis_score                -- NEW
+  FROM demo_comorb AS dc
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.first_day_sofa` AS fs USING (subject_id, hadm_id, stay_id)
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.apsiii`         AS ap USING (subject_id, hadm_id, stay_id)
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.lods`           AS ld USING (subject_id, hadm_id, stay_id)
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.oasis`          AS os USING (subject_id, hadm_id, stay_id) -- NEW
+),
+
+
+-- =============================================
+-- labs
+-- =============================================
+-- Get last lab measurement within 24h of ICU admission
+labs_last24h AS (
+  WITH windowed AS (
+    SELECT
+      c.stay_id, c.hadm_id, c.intime,
+      l.charttime, l.valuenum,
+      UPPER(di.label) AS label,
+      l.valueuom
+    FROM cabg_icustays c
+    JOIN `physionet-data.mimiciv_3_1_hosp.labevents` l
+      ON l.hadm_id = c.hadm_id
+    JOIN `physionet-data.mimiciv_3_1_hosp.d_labitems` di
+      ON di.itemid = l.itemid
+    WHERE l.valuenum IS NOT NULL
+      AND l.charttime BETWEEN c.intime AND DATETIME_ADD(c.intime, INTERVAL 24 HOUR)
+  ),
+  mapped AS (
+    SELECT
+      stay_id,
+      charttime,
+      valuenum,
+      CASE
+        WHEN label IN ('TROPONIN T','TROPONIN I','TROPONIN') THEN 'troponin'
+        WHEN label IN ('CREATININE')                          THEN 'creatinine'
+        WHEN label IN ('UREA NITROGEN','BLOOD UREA NITROGEN','UREA NITROGEN (BUN)','BUN') THEN 'bun'
+        WHEN label IN ('SODIUM')                              THEN 'sodium'
+        WHEN label IN ('POTASSIUM')                           THEN 'potassium'
+        WHEN label IN ('GLUCOSE','GLUCOSE, SERUM','GLUCOSE (POC)') THEN 'glucose'
+        WHEN label IN ('HEMOGLOBIN')                          THEN 'hemoglobin'
+        WHEN label IN ('WBC','WHITE BLOOD CELLS','WHITE BLOOD CELL COUNT') THEN 'wbc'
+        WHEN label IN ('LACTATE','LACTATE (ARTERIAL)')        THEN 'lactate'
+        ELSE NULL
+      END AS analyte
+    FROM windowed
+  )
+  SELECT
+    stay_id,
+    ARRAY_AGG(IF(analyte='troponin',   valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS troponin_last_24h,
+    ARRAY_AGG(IF(analyte='creatinine', valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS creatinine_last_24h,
+    ARRAY_AGG(IF(analyte='bun',        valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS bun_last_24h,
+    ARRAY_AGG(IF(analyte='sodium',     valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS sodium_last_24h,
+    ARRAY_AGG(IF(analyte='potassium',  valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS potassium_last_24h,
+    ARRAY_AGG(IF(analyte='glucose',    valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS glucose_last_24h,
+    ARRAY_AGG(IF(analyte='hemoglobin', valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS hemoglobin_last_24h,
+    ARRAY_AGG(IF(analyte='wbc',        valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS wbc_last_24h,
+    ARRAY_AGG(IF(analyte='lactate',    valuenum, NULL) IGNORE NULLS ORDER BY charttime DESC LIMIT 1)[OFFSET(0)] AS lactate_last_24h
+  FROM mapped
+  WHERE analyte IS NOT NULL
+  GROUP BY stay_id
+),
+
+-- ======
+-- utils
+-- =====
+-- 7b) Utilization (prior ICU count + previous inter-ICU gap in days)
+utilization AS (
+  SELECT
+    d.subject_id, d.hadm_id, d.stay_id, d.intime,
+    COUNTIF(i.intime < d.intime) AS n_prior_icu_stays,
+    SAFE_DIVIDE(
+      DATETIME_DIFF(
+        d.intime,
+        MAX(IF(i.intime < d.intime, i.outtime, NULL)),  -- latest prior ICU discharge
+        HOUR
+      ),
+      24.0
+    ) AS prev_gap_days
+  FROM demo AS d
+  LEFT JOIN `physionet-data.mimiciv_3_1_icu.icustays` AS i
+    ON i.subject_id = d.subject_id
+  GROUP BY d.subject_id, d.hadm_id, d.stay_id, d.intime
+),
+
+-- =============================================
+-- 7) First-day vitals (means, by stay_id) AND join with lab and utils measurements
+-- =============================================
+demo_comorb_severity_vitals AS (
+  SELECT
+    dcs.*,
+    v.heart_rate_mean,
+    v.sbp_mean,
+    v.dbp_mean,
+    v.mbp_mean,
+    v.resp_rate_mean,
+    v.temperature_mean,
+    v.spo2_mean,
+    v.glucose_mean,
+
+    -- NEW: last-24h labs
+    lb.creatinine_last_24h,
+    lb.bun_last_24h,
+    lb.sodium_last_24h,
+    lb.potassium_last_24h,
+    lb.glucose_last_24h,
+    lb.hemoglobin_last_24h,
+    lb.wbc_last_24h,
+    lb.lactate_last_24h,
+    lb.troponin_last_24h,
+
+    -- NEW: utilization
+    u.n_prior_icu_stays,
+    u.prev_gap_days
+  FROM demo_comorb_severity AS dcs
+  LEFT JOIN `physionet-data.mimiciv_3_1_derived.first_day_vitalsign` AS v
+    USING (subject_id, stay_id)
+  LEFT JOIN labs_last24h AS lb
+    USING (stay_id)
+  LEFT JOIN utilization AS u
+    USING (subject_id, hadm_id, stay_id)
+)
+
+
+
+-- =============================================
+-- 8) Materialize final table
+--    (drop intime/outtime if not used as features)
+-- =============================================
+#CREATE OR REPLACE TABLE `avian-osprey-469804-j0.ml4health.icustays_cabg_features` AS
+SELECT *
+FROM demo_comorb_severity_vitals
+ORDER BY subject_id, intime;

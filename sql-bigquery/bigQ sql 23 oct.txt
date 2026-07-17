@@ -1,0 +1,287 @@
+# seq_num = 1 indicates primary diagnoses.
+#  Idea: include hosp admissions where the top-k diagnosis match the CHD-related ICD codes? seq_num <= k
+DECLARE k INT64 DEFAULT 10; 
+DECLARE troponin_min_url FLOAT64 DEFAULT 0.4;   -- adjust if you know your assay URL
+DECLARE pre_hours  INT64 DEFAULT 12;             -- look-back window
+DECLARE post_hours INT64 DEFAULT 24;             -- look-forward window
+
+
+# PART I: OBTAIN RELEVANT ICU STAYS AND LABEL THEM
+# 1.1 hard code ICD codes from phekb .xlsx 
+WITH raw_phekb_codes AS (
+  SELECT code FROM UNNEST([
+    '410.00','410.01','410.02','410.10','410.11','410.12','410.20','410.21','410.22',
+    '410.30','410.31','410.32','410.40','410.41','410.42','410.50','410.51','410.52',
+    '410.60','410.61','410.62','410.70','410.71','410.72','410.80','410.81','410.82',
+    '410.90','410.91','410.92','412','429.71','429.79',
+    'I21.01','I21.02','I21.09','I21.11','I21.19','I21.21','I21.29','I21.3','I21.4',
+    'I22.0','I22.1','I22.2','I22.8','I22.9',
+    'I23.0','I23.1','I23.2','I23.3','I23.4','I23.5','I23.6','I23.7','I23.8',
+    'I24.1','I25.2'
+  ]) AS code
+),
+phekb_chd_codes AS (
+  SELECT
+    REPLACE(UPPER(code), '.', '') AS icd_code,                              -- e.g., '410.01' -> '41001', 'I21.4' -> 'I214'
+    CASE WHEN REGEXP_CONTAINS(UPPER(code), r'^[A-Z]') THEN 10 ELSE 9 END AS icd_version
+  FROM raw_phekb_codes
+),
+# 1.2 identify CHD hospital admissions based on ICD codes (at least, their prefixes) in 1.1
+chd_admissions_raw AS (
+  # SELECT DISTINCT t1.subject_id, t1.hadm_id
+  # SELECT *
+  SELECT t1.subject_id, t1.hadm_id, t2.icd_code, t2.icd_version, t2.long_title
+  FROM `physionet-data.mimiciv_3_1_hosp.diagnoses_icd` AS t1
+  JOIN `physionet-data.mimiciv_3_1_hosp.d_icd_diagnoses` AS t2
+    ON t1.icd_code = t2.icd_code
+   AND t1.icd_version = t2.icd_version
+  JOIN phekb_chd_codes p
+    ON p.icd_version = t1.icd_version
+   AND t1.icd_code = p.icd_code   # ICD codes exact match
+  WHERE t1.seq_num <= k
+),
+
+# 1.2.1 Minimal set of columns (for joining to ICU stays)
+chd_admissions AS (
+  SELECT DISTINCT subject_id, hadm_id
+  FROM chd_admissions_raw
+),
+
+
+# 2. ICU stays for those admissions
+chd_icustays AS (
+  SELECT i.subject_id, i.hadm_id, i.stay_id, i.intime, i.outtime
+  FROM `physionet-data.mimiciv_3_1_icu.icustays` i
+  JOIN chd_admissions c
+    ON i.subject_id = c.subject_id
+   AND i.hadm_id    = c.hadm_id
+),
+
+# 3. label the data based on ICU readmission (y=0 or 1)
+# 3.1 LEAD(intime): for each ICU stay (which has an `intime`), we look ahead at the next intime
+# OVER (PARTITION BY subject_id ORDER BY intime): defining 'next' -- next ICU admission time for the same patient
+ordered_stays AS (
+  SELECT
+    subject_id, hadm_id, stay_id, intime, outtime,
+    LEAD(intime) OVER (PARTITION BY subject_id ORDER BY intime) AS next_intime
+  FROM chd_icustays
+),
+# using outtime and next_intime cols, label the current stay as a readmission if that
+# next admission starts within 30 days of this stay’s outtime
+labeled_stays AS (
+  SELECT
+    subject_id, hadm_id, stay_id, intime, outtime,
+    next_intime,
+    CASE
+      WHEN next_intime IS NOT NULL
+       AND next_intime > outtime                              # strictly after discharge
+       AND DATETIME_DIFF(next_intime, outtime, DAY) <= 30     # within 30 days
+       AND DATETIME_DIFF(next_intime, outtime, HOUR) > 6      # optional: exclude unit transfers
+      THEN 1 ELSE 0
+    END AS y_readmit_30d
+  FROM ordered_stays
+),
+
+# 4. refinement: acute MI
+# 4.1 acute MI using icd codes first
+acute_mi_codes AS (
+  -- Acute MI families only (ICD-9 410.xx, ICD-10 I21.x) from our phekb list
+  SELECT code FROM UNNEST([
+    '410.00','410.01','410.02','410.10','410.11','410.12','410.20','410.21','410.22',
+    '410.30','410.31','410.32','410.40','410.41','410.42','410.50','410.51','410.52',
+    '410.60','410.61','410.62','410.70','410.71','410.72','410.80','410.81','410.82',
+    '410.90','410.91','410.92',
+    'I21.01','I21.02','I21.09','I21.11','I21.19','I21.21','I21.29','I21.3','I21.4'
+  ]) AS code
+),
+acute_mi_norm AS (
+  SELECT REPLACE(UPPER(code), '.', '') AS icd_code_norm,
+         CASE WHEN REGEXP_CONTAINS(UPPER(code), r'^[A-Z]') THEN 10 ELSE 9 END AS icd_version
+  FROM acute_mi_codes
+),
+-- hospital admissions that have acute-MI codes in top-k positions
+acute_mi_admissions AS (
+  SELECT DISTINCT d.subject_id, d.hadm_id
+  FROM `physionet-data.mimiciv_3_1_hosp.diagnoses_icd` d
+  JOIN acute_mi_norm p
+    ON d.icd_version = p.icd_version
+   AND REPLACE(UPPER(d.icd_code), '.', '') = p.icd_code_norm
+  WHERE d.seq_num <= k
+),
+-- restrict labeled stays to acute-MI admissions
+acute_mi_stays AS (
+  SELECT ls.*
+  FROM labeled_stays ls
+  JOIN acute_mi_admissions a
+    ON ls.subject_id = a.subject_id
+   AND ls.hadm_id    = a.hadm_id
+),
+
+# 4.2 filter by troponin threshold
+# 4.2.1 get tropoinin lab items
+troponin_items AS (
+  SELECT itemid
+  FROM `physionet-data.mimiciv_3_1_hosp.d_labitems`
+  WHERE LOWER(label) LIKE '%troponin%'
+),
+# 4.2.2 get troponin measurements at (or near at) ICU admission time (`intime`)
+trop_near_intime AS (
+  SELECT
+    s.subject_id, s.hadm_id, s.stay_id,
+    MAX(l.valuenum) AS trop_max
+  FROM acute_mi_stays s
+  JOIN `physionet-data.mimiciv_3_1_hosp.labevents` l
+    ON l.subject_id = s.subject_id
+   AND l.hadm_id    = s.hadm_id
+  JOIN troponin_items t
+    ON t.itemid = l.itemid
+  WHERE l.valuenum IS NOT NULL
+    AND l.charttime BETWEEN # defining 'near' intime: (intime - pre_hours, intime + post_hours)
+        DATETIME_SUB(s.intime, INTERVAL pre_hours  HOUR)
+        AND DATETIME_ADD(s.intime, INTERVAL post_hours HOUR)
+  GROUP BY s.subject_id, s.hadm_id, s.stay_id
+),
+# 4.2.3 filter acute-MI ICU stays such that their troponin levels exceed troponin_min_url
+acute_mi_trop_refined AS (
+  SELECT s.*, (t.trop_max >= troponin_min_url) AS trop_above_url
+  FROM acute_mi_stays s
+  LEFT JOIN trop_near_intime t
+    USING (subject_id, hadm_id, stay_id)
+),
+
+-- (you already have: labeled_stays, acute_mi_admissions, acute_mi_stays,
+--  troponin_items, trop_near_intime, acute_mi_trop_refined)
+
+-- Stays to KEEP among acute MI: must meet troponin threshold
+acute_mi_trop_keep AS (
+  SELECT subject_id, hadm_id, stay_id
+  FROM acute_mi_trop_refined
+  WHERE COALESCE(trop_above_url, FALSE) = TRUE # if trop_above_url = TRUE
+),
+
+# 5. annotate our previous ICD-phenotyped cohort with troponin levels (preserves ALL rows from labeled_stays)
+final_labeled_stays_tagged AS (
+  SELECT
+    ls.*,
+    -- acute MI by ICD at admission level
+    (a.hadm_id IS NOT NULL) AS is_acute_mi_icd,
+    -- acute MI by ICD AND passes troponin filter at the stay level
+    (k.stay_id IS NOT NULL) AS is_acute_mi_trop_refined,
+    -- one convenient flag you can use downstream if you want the filtered cohort:
+    ((a.hadm_id IS NULL) OR (k.stay_id IS NOT NULL)) AS keep_in_primary_analysis
+  FROM labeled_stays ls
+  LEFT JOIN acute_mi_admissions a
+    ON ls.subject_id = a.subject_id AND ls.hadm_id = a.hadm_id
+  LEFT JOIN acute_mi_trop_keep k
+    ON ls.subject_id = k.subject_id
+   AND ls.hadm_id    = k.hadm_id
+   AND ls.stay_id    = k.stay_id
+),
+
+# 6. finally annotate icd_flags to our cohort for downstream analysis (e.g. group level validation)
+# 6.1. Collapse ICDs → one row per hadm_id with binary flags
+icd_flags AS (
+  SELECT
+    hadm_id,
+    MAX(IF(REGEXP_CONTAINS(icd_code, r'^410') OR REGEXP_CONTAINS(icd_code, r'^I21|^I22'), 1, 0)) AS is_acute_mi,
+    MAX(IF(icd_code IN ('412','I252') OR REGEXP_CONTAINS(icd_code, r'^I25'), 1, 0))        AS is_chronic_ihd,
+    MAX(IF(REGEXP_CONTAINS(icd_code, r'^I23'), 1, 0))                                       AS is_complications_post_mi,
+    MAX(IF(REGEXP_CONTAINS(icd_code, r'^I24'), 1, 0))                                       AS is_other_acute_ihd
+  FROM chd_admissions_raw
+  GROUP BY hadm_id
+),
+# 6.2. Add MI CHD flags to final_labeled_stays rows
+final_labeled_stays_tagged_all AS (
+  SELECT
+  fls.*,
+  COALESCE(f.is_acute_mi, 0)               AS is_acute_mi,
+  COALESCE(f.is_chronic_ihd, 0)            AS is_chronic_ihd,
+  COALESCE(f.is_complications_post_mi, 0)  AS is_complications_post_mi,
+  COALESCE(f.is_other_acute_ihd, 0)        AS is_other_acute_ihd
+  FROM final_labeled_stays_tagged AS fls
+  LEFT JOIN icd_flags AS f USING (hadm_id)
+)
+
+# PART II: ADD FEATURES
+---- .....
+
+
+# all WITHs are done. 
+# NOTE: In BigQuery, a WITH must be followed by a SELECT/INSERT/CREATE .. Otherwise, BigQuery says “Unexpected end of script”. 
+# .) obtain the labelled ICU stays (features will be joined)
+# note keep_in_primary_analysis is equivalent to labeled_stays but former is left joined with ICU flags and troponin filter flags
+SELECT *
+FROM final_labeled_stays_tagged_all
+WHERE keep_in_primary_analysis=True
+ORDER BY y_readmit_30d DESC;
+
+# .) obtain cohort size (ICD only) VS cohort size (ICD with above-tropinin acute MI) 
+-- SELECT
+--   COUNT(*) AS n_cohort,
+--   SUM(CASE WHEN is_acute_mi_icd THEN 1 ELSE 0 END)                      AS n_acute_mi_icd_rows,
+--   SUM(CASE WHEN is_acute_mi_trop_refined THEN 1 ELSE 0 END)             AS n_acute_mi_trop_refined_rows,
+--   SUM(y_readmit_30d) AS n_readmit_30d,
+
+--   SUM(CAST(keep_in_primary_analysis AS INT)) AS n_filtered_cohort,
+
+--   SAFE_DIVIDE(SUM(y_readmit_30d), COUNT(*)) AS prop_readmit_30d
+-- FROM final_labeled_stays_tagged_all;
+
+
+# .) obtain the filtered cohort with above-troponin acute MI (i.e. set keep_in_primary_analysis = TRUE) 
+-- SELECT
+--   COUNT(*) AS n_cohort_filtered,
+--   SAFE_DIVIDE(SUM(y_readmit_30d), COUNT(*)) AS prop_readmit_30d,
+--   SUM(y_readmit_30d) AS n_readmit_30d_filtered
+-- FROM final_labeled_stays_tagged_all WHERE keep_in_primary_analysis = TRUE;
+
+
+# .) Distribution of binary class labels
+-- SELECT
+--   SUM(y_readmit_30d) / COUNT(*) AS prop_readmission,
+--   SUM(y_readmit_30d) AS n_readmissions,
+--   SUM(CAST(keep_in_primary_analysis AS INT)) AS n_filtered_cohort,
+--   COUNT(*) AS total_chd_mi_icu_stays,
+--   (SELECT MIN(DATETIME_DIFF(next_intime, outtime, HOUR))  FROM labeled_stays WHERE y_readmit_30d = 1) AS min_readmission_duration
+-- FROM final_labeled_stays_tagged
+
+-- SELECT
+--   COUNT(*) AS n_acute_mi_stays,
+--   SUM(CASE WHEN trop_above_url THEN 1 ELSE 0 END) AS n_with_trop_above_url,
+--   SUM(y_readmit_30d) AS n_readmit_30d_all,
+--   SAFE_DIVIDE(SUM(y_readmit_30d), COUNT(*)) AS prop_readmit_30d_all,
+--   -- restricted to refined acute MI (biochemical evidence present)
+--   SUM(CASE WHEN trop_above_url THEN y_readmit_30d ELSE 0 END) AS n_readmit_30d_refined,
+--   SAFE_DIVIDE(
+--     SUM(CASE WHEN trop_above_url THEN y_readmit_30d ELSE 0 END),
+--     NULLIF(SUM(CASE WHEN trop_above_url THEN 1 ELSE 0 END),0)
+--   ) AS prop_readmit_30d_refined
+-- FROM acute_mi_trop_refined;
+
+
+# .) Misc queries for debugging.
+
+# .) Look at our labelled data (ICD only without filtering for above-troponin acute MI).
+-- SELECT * 
+-- FROM labeled_stays
+
+
+# .) optional: are chronic codes driving ICU use
+-- SELECT
+--   CASE
+--     WHEN REGEXP_CONTAINS(icd_code, r'^410') OR REGEXP_CONTAINS(icd_code, r'^I21|^I22') THEN 'Acute MI'
+--     WHEN icd_code IN ('412','I252') OR REGEXP_CONTAINS(icd_code, r'^I25') THEN 'Chronic IHD'
+--     WHEN REGEXP_CONTAINS(icd_code, r'^I23') THEN 'Complications post-MI'
+--     WHEN REGEXP_CONTAINS(icd_code, r'^I24') THEN 'Other acute IHD'
+--     ELSE 'Other'
+--   END AS bucket,
+--   COUNT(DISTINCT hadm_id) AS hadm
+-- FROM chd_admissions_raw
+-- GROUP BY bucket ORDER BY hadm DESC;
+
+
+
+
+
+
+

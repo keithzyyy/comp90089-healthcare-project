@@ -1,0 +1,462 @@
+{
+  "best_val_pr_auc": 0.22144311161282695,
+  "best_params": {
+    "neurons": [
+      256,
+      128,
+      64
+    ],
+    "activation_name": "leaky_relu",
+    "bn": true,
+    "dropout": 0.2,
+    "optimizer": "adam",
+    "learning_rate": 0.0003,
+    "reg_type": "l1_l2",
+    "reg_l1": 0.0001,
+    "reg_l2": 0.0001,
+    "loss_name": "focal",
+    "focal_alpha": 0.5,
+    "focal_gamma": 1.0,
+    "batch_size": 450,
+    "epochs": 300
+  },
+  "runs": [
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 1.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.2000293299706961,
+      "best_epoch": 36
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 1.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.1966546190847053,
+      "best_epoch": 39
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 2.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.19999161350630776,
+      "best_epoch": 34
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 2.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.1610993275863389,
+      "best_epoch": 35
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 1.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.18722912257891,
+      "best_epoch": 49
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 1.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.2049949855516715,
+      "best_epoch": 40
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 2.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.20148904035910079,
+      "best_epoch": 33
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 2.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.17796906295810508,
+      "best_epoch": 37
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 1.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.21653784515872185,
+      "best_epoch": 49
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 1.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.1526497389068903,
+      "best_epoch": 32
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 2.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.1643324525718048,
+      "best_epoch": 27
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.25,
+        "focal_gamma": 2.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.16607374813413658,
+      "best_epoch": 56
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 1.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.19557344121315165,
+      "best_epoch": 40
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 1.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.22144311161282695,
+      "best_epoch": 46
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 2.0,
+        "batch_size": 256,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.18712438816345403,
+      "best_epoch": 45
+    },
+    {
+      "params": {
+        "neurons": [
+          256,
+          128,
+          64
+        ],
+        "activation_name": "leaky_relu",
+        "bn": true,
+        "dropout": 0.2,
+        "optimizer": "adam",
+        "learning_rate": 0.0003,
+        "reg_type": "l1_l2",
+        "reg_l1": 0.0001,
+        "reg_l2": 0.0001,
+        "loss_name": "focal",
+        "focal_alpha": 0.5,
+        "focal_gamma": 2.0,
+        "batch_size": 450,
+        "epochs": 300
+      },
+      "val_pr_auc": 0.15406183811244367,
+      "best_epoch": 46
+    }
+  ],
+  "numeric_cols": [
+    "age",
+    "cci",
+    "myocardial_infarct",
+    "congestive_heart_failure",
+    "peripheral_vascular_disease",
+    "cerebrovascular_disease",
+    "dementia",
+    "chronic_pulmonary_disease",
+    "rheumatic_disease",
+    "peptic_ulcer_disease",
+    "mild_liver_disease",
+    "diabetes_without_cc",
+    "diabetes_with_cc",
+    "paraplegia",
+    "renal_disease",
+    "malignant_cancer",
+    "severe_liver_disease",
+    "metastatic_solid_tumor",
+    "aids",
+    "first_day_sofa",
+    "apsiii_score",
+    "oasis_score",
+    "heart_rate_mean",
+    "sbp_mean",
+    "dbp_mean",
+    "mbp_mean",
+    "resp_rate_mean",
+    "temperature_mean",
+    "spo2_mean",
+    "glucose_mean",
+    "creatinine_last_24h",
+    "bun_last_24h",
+    "sodium_last_24h",
+    "potassium_last_24h",
+    "glucose_last_24h",
+    "hemoglobin_last_24h",
+    "wbc_last_24h",
+    "lactate_last_24h",
+    "troponin_last_24h",
+    "n_prior_icu_stays"
+  ],
+  "categorical_cols": [
+    "gender",
+    "race",
+    "admission_type",
+    "insurance",
+    "language",
+    "marital_status",
+    "cohort"
+  ],
+  "want_IQR_clipping": true,
+  "want_oversample": false
+}
