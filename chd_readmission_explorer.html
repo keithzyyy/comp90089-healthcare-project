@@ -1,0 +1,333 @@
+<div role="img" aria-label="Interactive explorer for a study predicting 30-day ICU readmission in coronary heart disease patients, covering cohort definition, model comparison, threshold tuning, and subgroup performance"></div>
+
+<div style="display:flex; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap;" id="nav">
+  <button data-tab="overview" class="navbtn active">Overview</button>
+  <button data-tab="data" class="navbtn">Cohort &amp; data</button>
+  <button data-tab="models" class="navbtn">Model comparison</button>
+  <button data-tab="threshold" class="navbtn">Threshold &amp; calibration</button>
+  <button data-tab="subgroup" class="navbtn">Subgroup performance</button>
+  <button data-tab="shap" class="navbtn">What drives risk</button>
+</div>
+
+<div id="panel-overview" class="panel">
+  <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin-bottom:1.5rem;">
+    <div class="metric"><p class="mlabel">ICU stays</p><p class="mval">15,445</p></div>
+    <div class="metric"><p class="mlabel">Patients</p><p class="mval">11,185</p></div>
+    <div class="metric"><p class="mlabel">Readmission rate</p><p class="mval">5.9%</p></div>
+    <div class="metric"><p class="mlabel">Features used</p><p class="mval">53</p></div>
+  </div>
+  <p style="font-size:14px; color:var(--color-text-secondary); margin-bottom:1rem;">Three cohorts make up the dataset, defined using PheKB phenotyping algorithms on diagnosis and procedure codes.</p>
+  <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-bottom:1.5rem;">
+    <div class="cohortcard c-coral">
+      <i class="ti ti-heartbeat" aria-hidden="true" style="font-size:20px;"></i>
+      <p class="ctitle">MI</p>
+      <p class="csub">Myocardial infarction</p>
+      <p class="cnum">5,430 stays</p>
+    </div>
+    <div class="cohortcard c-teal">
+      <i class="ti ti-needle" aria-hidden="true" style="font-size:20px;"></i>
+      <p class="ctitle">PCI</p>
+      <p class="csub">Coronary intervention</p>
+      <p class="cnum">2,349 stays</p>
+    </div>
+    <div class="cohortcard c-purple">
+      <i class="ti ti-scissors" aria-hidden="true" style="font-size:20px;"></i>
+      <p class="ctitle">CABG</p>
+      <p class="csub">Bypass graft</p>
+      <p class="cnum">7,666 stays</p>
+    </div>
+  </div>
+  <div style="border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1rem 1.25rem;">
+    <p style="font-size:14px; font-weight:500; margin:0 0 8px;">Headline result</p>
+    <p style="font-size:14px; color:var(--color-text-secondary); margin:0;">The focal-loss MLP had the best overall discrimination (test AUC-PR 0.194, AUC-ROC 0.747), trading precision for much higher recall once its threshold was tuned. Explore the tabs above to see how each model and design choice contributed.</p>
+  </div>
+</div>
+
+<div id="panel-data" class="panel" style="display:none;">
+  <p style="font-size:14px; font-weight:500; margin-bottom:8px;">Filter by cohort</p>
+  <div style="display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap;" id="cohort-filter">
+    <button data-cohort="all" class="chip active">All cohorts</button>
+    <button data-cohort="mi" class="chip">MI</button>
+    <button data-cohort="pci" class="chip">PCI</button>
+    <button data-cohort="cabg" class="chip">CABG</button>
+  </div>
+  <div style="position:relative; height:260px; margin-bottom:1rem;">
+    <canvas id="splitChart" role="img" aria-label="Bar chart of ICU stays and readmission rate across training, validation and test sets">Training 10630 stays, 5.8% readmit. Validation 2270 stays, 6.51% readmit. Test 2253 stays, 5.4% readmit.</canvas>
+  </div>
+  <div style="display:flex; gap:16px; margin:8px 0 1.5rem; font-size:12px; color:var(--color-text-secondary); flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;"></span>ICU stays</span>
+    <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30;"></span>Readmission rate (%)</span>
+  </div>
+  <p id="split-note" style="font-size:13px; color:var(--color-text-secondary); margin-bottom:1.5rem;">Splits are by patient (not by ICU stay) to avoid leakage, and stratified by cohort and race.</p>
+
+  <p style="font-size:14px; font-weight:500; margin-bottom:8px;">Feature groups</p>
+  <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px;">
+    <button class="featbtn" data-feat="demo">Demographics</button>
+    <button class="featbtn" data-feat="comorb">Comorbidities (CCI)</button>
+    <button class="featbtn" data-feat="severity">Illness severity (SOFA, SAPS II, OASIS)</button>
+    <button class="featbtn" data-feat="vitals">Vital signs (24h mean &amp; slope)</button>
+    <button class="featbtn" data-feat="labs">Labs (troponin, creatinine, BUN...)</button>
+    <button class="featbtn" data-feat="tx">Treatment intensity</button>
+  </div>
+  <div id="feat-detail" style="margin-top:12px; font-size:13px; color:var(--color-text-secondary); border-top:0.5px solid var(--color-border-tertiary); padding-top:12px; display:none;"></div>
+</div>
+
+<div id="panel-models" class="panel" style="display:none;">
+  <p style="font-size:14px; font-weight:500; margin-bottom:4px;">Test set AUC-PR by model</p>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin-bottom:12px;">AUC-PR matters most here given the 5–6% readmission prevalence; random-baseline AUC-PR sits around 0.054.</p>
+  <div style="position:relative; height:340px; margin-bottom:1.5rem;">
+    <canvas id="aucprChart" role="img" aria-label="Horizontal bar chart of test AUC-PR for nine models, ranging from 0.111 for vanilla MLP to 0.194 for focal loss MLP"></canvas>
+  </div>
+  <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
+    <button data-fam="all" class="chip active">All families</button>
+    <button data-fam="lr" class="chip">Logistic regression</button>
+    <button data-fam="xgb" class="chip">XGBoost</button>
+    <button data-fam="mlp" class="chip">MLP</button>
+  </div>
+  <div id="model-cards" style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;"></div>
+</div>
+
+<div id="panel-threshold" class="panel" style="display:none;">
+  <p style="font-size:14px; font-weight:500; margin-bottom:8px;">Pick a decision threshold</p>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin-bottom:12px;">Below: thresholds tuned to maximise F1 on the validation set, then applied to test predictions. Toggle to compare vanilla vs focal-loss MLP.</p>
+  <div style="display:flex; gap:8px; margin-bottom:1.25rem;">
+    <button data-mlp="vanilla" class="chip active">Vanilla MLP (τ=0.133)</button>
+    <button data-mlp="focal" class="chip">Focal loss MLP (τ=0.296)</button>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin-bottom:1.5rem;" id="thresh-metrics"></div>
+  <div style="position:relative; height:260px; margin-bottom:0.5rem;">
+    <canvas id="confChart" role="img" aria-label="Bar chart showing true negatives, false positives, false negatives and true positives for the selected model"></canvas>
+  </div>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin:0 0 1.5rem;">Focal loss catches far more true readmissions (67 vs 15) but at the cost of many more false alarms (449 vs 66) — a deliberate trade-off for a setting where missed readmissions are costlier than false alarms.</p>
+  <div style="border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1rem 1.25rem;">
+    <p style="font-size:14px; font-weight:500; margin:0 0 8px;">Calibration caveat</p>
+    <p style="font-size:14px; color:var(--color-text-secondary); margin:0;">Even the better-separated focal-loss model's predicted probabilities cluster between 0 and 0.5 on the test set — discrimination is reasonable, but the raw probabilities shouldn't be read as true risk percentages without further calibration.</p>
+  </div>
+</div>
+
+<div id="panel-subgroup" class="panel" style="display:none;">
+  <p style="font-size:14px; font-weight:500; margin-bottom:8px;">Focal-loss MLP performance by group</p>
+  <div style="display:flex; gap:8px; margin-bottom:1rem; flex-wrap:wrap;">
+    <button data-grp="cohort" class="chip active">By cohort</button>
+    <button data-grp="age" class="chip">By age band</button>
+    <button data-grp="race" class="chip">By race</button>
+  </div>
+  <div style="position:relative; height:300px;">
+    <canvas id="groupChart" role="img" aria-label="Bar chart of F1 score by subgroup"></canvas>
+  </div>
+  <p id="group-note" style="font-size:13px; color:var(--color-text-secondary); margin:12px 0 0;"></p>
+</div>
+
+<div id="panel-shap" class="panel" style="display:none;">
+  <p style="font-size:14px; font-weight:500; margin-bottom:8px;">Top predictors of readmission (SHAP, focal-loss MLP)</p>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin-bottom:1rem;">Mean absolute SHAP value in log-odds — larger bars mean the feature shifted predictions more, on average, across test patients.</p>
+  <div style="position:relative; height:380px;">
+    <canvas id="shapChart" role="img" aria-label="Horizontal bar chart of mean absolute SHAP values for the top predictors of readmission"></canvas>
+  </div>
+  <p style="font-size:13px; color:var(--color-text-secondary); margin:1rem 0 0;">Diastolic blood pressure, comorbidity burden (CCI), oxygen saturation and illness severity (APS III) lead the ranking — consistent with prior heart-failure readmission literature on vital signs and comorbidities as key predictors.</p>
+</div>
+
+<style>
+.navbtn{font-size:13px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-secondary);cursor:pointer;}
+.navbtn.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500;border-color:var(--color-border-secondary);}
+.chip{font-size:12px;padding:5px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-secondary);cursor:pointer;}
+.chip.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500;}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;}
+.mlabel{font-size:13px;color:var(--color-text-secondary);margin:0 0 4px;}
+.mval{font-size:24px;font-weight:500;margin:0;}
+.cohortcard{border-radius:var(--border-radius-lg);padding:1rem;border:0.5px solid var(--color-border-tertiary);}
+.cohortcard.c-coral{background:#FAECE7;}
+.cohortcard.c-teal{background:#E1F5EE;}
+.cohortcard.c-purple{background:#EEEDFE;}
+.ctitle{font-size:16px;font-weight:500;margin:8px 0 0;}
+.csub{font-size:12px;margin:2px 0 6px;}
+.cnum{font-size:13px;font-weight:500;margin:0;}
+.c-coral .ctitle,.c-coral .cnum{color:#4A1B0C;}
+.c-coral .csub{color:#993C1D;}
+.c-teal .ctitle,.c-teal .cnum{color:#04342C;}
+.c-teal .csub{color:#0F6E56;}
+.c-purple .ctitle,.c-purple .cnum{color:#26215C;}
+.c-purple .csub{color:#534AB7;}
+.featbtn{font-size:13px;padding:10px 12px;text-align:left;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-primary);cursor:pointer;}
+.featbtn.active{background:var(--color-background-secondary);border-color:var(--color-border-secondary);}
+.modelcard{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;}
+.modelcard p{margin:0;}
+.modelcard .mname{font-size:14px;font-weight:500;margin-bottom:8px;}
+.modelcard .mrow{display:flex;justify-content:space-between;font-size:13px;color:var(--color-text-secondary);padding:3px 0;}
+.modelcard .mrow span:last-child{color:var(--color-text-primary);font-weight:500;}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const models = [
+  {name:'LASSO (no resampling)', fam:'lr', aucpr:0.161, aucroc:0.747, recall:0.000, precision:0.000},
+  {name:'LASSO (resampling)', fam:'lr', aucpr:0.142, aucroc:0.734, recall:0.680, precision:0.188},
+  {name:'Inverse class weighted LR', fam:'lr', aucpr:0.143, aucroc:0.738, recall:0.689, precision:0.193},
+  {name:'Baseline XGBoost', fam:'xgb', aucpr:0.1615, aucroc:0.7238, recall:0.631, precision:0.106},
+  {name:'Random oversampling XGBoost', fam:'xgb', aucpr:0.178, aucroc:0.7223, recall:0.607, precision:0.110},
+  {name:'Class weighted XGBoost', fam:'xgb', aucpr:0.158, aucroc:0.7118, recall:0.377, precision:0.179},
+  {name:'Vanilla MLP', fam:'mlp', aucpr:0.111, aucroc:0.680, recall:0.123, precision:0.185},
+  {name:'Oversampled MLP', fam:'mlp', aucpr:0.144, aucroc:0.692, recall:null, precision:null},
+  {name:'Focal loss MLP', fam:'mlp', aucpr:0.194, aucroc:0.747, recall:0.549, precision:0.130},
+];
+const famColor = {lr:'#378ADD', xgb:'#1D9E75', mlp:'#D85A30'};
+const famLabel = {lr:'Logistic regression', xgb:'XGBoost', mlp:'MLP'};
+
+function setActive(container, selector, dataAttr, val){
+  container.querySelectorAll(selector).forEach(b=>b.classList.toggle('active', b.dataset[dataAttr]===val));
+}
+
+document.getElementById('nav').addEventListener('click', e=>{
+  const btn = e.target.closest('.navbtn');
+  if(!btn) return;
+  setActive(document.getElementById('nav'), '.navbtn', 'tab', btn.dataset.tab);
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.getElementById('panel-'+btn.dataset.tab).style.display='block';
+});
+
+const splitData = {
+  all: {labels:['Training','Validation','Test'], n:[10630,2270,2253], rate:[5.8,6.51,5.4]},
+  mi: {labels:['Training','Validation','Test'], n:[3678,789,777], rate:[5.8,6.51,5.4]},
+  pci: {labels:['Training','Validation','Test'], n:[1604,330,336], rate:[5.8,6.51,5.4]},
+  cabg: {labels:['Training','Validation','Test'], n:[5336,1149,1138], rate:[5.8,6.51,5.4]}
+};
+let splitChart;
+function renderSplit(cohort){
+  const d = splitData[cohort];
+  if(splitChart) splitChart.destroy();
+  splitChart = new Chart(document.getElementById('splitChart'), {
+    type:'bar',
+    data:{ labels:d.labels, datasets:[
+      {label:'ICU stays', data:d.n, backgroundColor:'#378ADD', yAxisID:'y'},
+      {label:'Readmission rate (%)', data:d.rate, backgroundColor:'#D85A30', yAxisID:'y1'}
+    ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      scales:{ y:{ beginAtZero:true, position:'left', title:{display:true,text:'ICU stays'} },
+               y1:{ beginAtZero:true, position:'right', max:10, grid:{drawOnChartArea:false}, title:{display:true,text:'Readmit %'} } },
+      plugins:{ legend:{display:false} } }
+  });
+  document.getElementById('split-note').textContent = cohort==='all'
+    ? 'Splits are by patient (not by ICU stay) to avoid leakage, and stratified by cohort and race. Counts shown are for the full dataset; per-cohort proportions are preserved across splits.'
+    : 'Approximate stays for the '+cohort.toUpperCase()+' cohort, scaled from the cohort\'s overall share (cohort-level readmission rates are not split out at this stage of the analysis).';
+}
+renderSplit('all');
+document.getElementById('cohort-filter').addEventListener('click', e=>{
+  const b = e.target.closest('.chip'); if(!b) return;
+  setActive(document.getElementById('cohort-filter'), '.chip', 'cohort', b.dataset.cohort);
+  renderSplit(b.dataset.cohort);
+});
+
+const featInfo = {
+  demo: 'Age, sex, ethnicity, and admission type (emergency, elective, urgent) — drawn from patients and admissions tables.',
+  comorb: 'Charlson Comorbidity Index plus binary flags for hypertension, diabetes, chronic kidney disease, COPD, heart failure, and malignancy.',
+  severity: 'SOFA, SAPS II, and OASIS composite ICU severity scores, sourced from MIMIC-IV derived tables.',
+  vitals: 'Mean and 24-hour slope of heart rate, blood pressure, mean arterial pressure, respiratory rate, SpO2, and temperature.',
+  labs: 'Troponin, creatinine, BUN, sodium, potassium, glucose, hemoglobin, white blood cell count, and lactate.',
+  tx: 'Medication count, vasopressor/inotrope use, mechanical ventilation, renal replacement therapy, and transfusions.'
+};
+document.getElementById('panel-data').querySelectorAll('.featbtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.featbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const el = document.getElementById('feat-detail');
+    el.style.display='block';
+    el.textContent = featInfo[btn.dataset.feat];
+  });
+});
+
+let aucprChart;
+function renderAucpr(){
+  if(aucprChart) aucprChart.destroy();
+  const sorted = [...models].sort((a,b)=>a.aucpr-b.aucpr);
+  aucprChart = new Chart(document.getElementById('aucprChart'), {
+    type:'bar',
+    data:{ labels: sorted.map(m=>m.name),
+      datasets:[{ data: sorted.map(m=>m.aucpr), backgroundColor: sorted.map(m=>famColor[m.fam]) }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      scales:{ x:{ beginAtZero:true, max:0.22, title:{display:true,text:'Test AUC-PR'} } },
+      plugins:{ legend:{display:false} } }
+  });
+}
+renderAucpr();
+
+function renderModelCards(fam){
+  const list = fam==='all' ? models : models.filter(m=>m.fam===fam);
+  document.getElementById('model-cards').innerHTML = list.map(m=>`
+    <div class="modelcard">
+      <p class="mname">${m.name}</p>
+      <p class="mrow"><span>Family</span><span>${famLabel[m.fam]}</span></p>
+      <p class="mrow"><span>Test AUC-PR</span><span>${m.aucpr.toFixed(3)}</span></p>
+      <p class="mrow"><span>Test AUC-ROC</span><span>${m.aucroc.toFixed(3)}</span></p>
+      <p class="mrow"><span>Recall (minority)</span><span>${m.recall!==null ? m.recall.toFixed(3) : 'n/a'}</span></p>
+      <p class="mrow"><span>Precision (minority)</span><span>${m.precision!==null ? m.precision.toFixed(3) : 'n/a'}</span></p>
+    </div>
+  `).join('');
+}
+renderModelCards('all');
+document.getElementById('panel-models').addEventListener('click', e=>{
+  const b = e.target.closest('[data-fam]'); if(!b) return;
+  setActive(document.getElementById('panel-models'), '.chip', 'fam', b.dataset.fam);
+  renderModelCards(b.dataset.fam);
+});
+
+const threshData = {
+  vanilla: {precision:0.185, recall:0.123, f1:0.148, mcc:0.112, tn:2065, fp:66, fn:107, tp:15},
+  focal: {precision:0.130, recall:0.549, f1:0.210, mcc:0.182, tn:1682, fp:449, fn:55, tp:67}
+};
+let confChart;
+function renderThresh(model){
+  const d = threshData[model];
+  document.getElementById('thresh-metrics').innerHTML = `
+    <div class="metric"><p class="mlabel">Precision</p><p class="mval">${d.precision.toFixed(3)}</p></div>
+    <div class="metric"><p class="mlabel">Recall</p><p class="mval">${d.recall.toFixed(3)}</p></div>
+    <div class="metric"><p class="mlabel">F1</p><p class="mval">${d.f1.toFixed(3)}</p></div>
+    <div class="metric"><p class="mlabel">MCC</p><p class="mval">${d.mcc.toFixed(3)}</p></div>
+  `;
+  if(confChart) confChart.destroy();
+  confChart = new Chart(document.getElementById('confChart'), {
+    type:'bar',
+    data:{ labels:['True negatives','False positives','False negatives','True positives'],
+      datasets:[{ data:[d.tn,d.fp,d.fn,d.tp], backgroundColor:['#1D9E75','#D85A30','#D85A30','#1D9E75'] }] },
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } }, plugins:{ legend:{display:false} } }
+  });
+}
+renderThresh('vanilla');
+document.getElementById('panel-threshold').addEventListener('click', e=>{
+  const b = e.target.closest('[data-mlp]'); if(!b) return;
+  setActive(document.getElementById('panel-threshold'), '.chip', 'mlp', b.dataset.mlp);
+  renderThresh(b.dataset.mlp);
+});
+
+const groupData = {
+  cohort: { labels:['CABG','MI','PCI'], f1:[0.256,0.200,0.180], note:'CABG has the highest F1 among cohorts, though all three remain modest; PCI has very few positive cases (13), making its estimate noisy.' },
+  age: { labels:['0-49','50-59','60-69','70-79','80+'], f1:[0.182,0.194,0.261,0.211,0.181], note:'The 60-69 age band has the highest F1, but false positives are concentrated among older patients (70+).' },
+  race: { labels:['Black','White','Asian','Unknown/other','Hispanic'], f1:[0.457,0.208,0.182,0.180,0.000], note:'F1 is highest for Black patients, though group sizes are very uneven (n=121 for Black vs n=1,564 for White), so these comparisons should be read cautiously.' }
+};
+let groupChart;
+function renderGroup(g){
+  const d = groupData[g];
+  if(groupChart) groupChart.destroy();
+  groupChart = new Chart(document.getElementById('groupChart'), {
+    type:'bar',
+    data:{ labels:d.labels, datasets:[{ data:d.f1, backgroundColor:'#534AB7' }] },
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, max:0.5, title:{display:true,text:'F1 score'} } }, plugins:{ legend:{display:false} } }
+  });
+  document.getElementById('group-note').textContent = d.note;
+}
+renderGroup('cohort');
+document.getElementById('panel-subgroup').addEventListener('click', e=>{
+  const b = e.target.closest('[data-grp]'); if(!b) return;
+  setActive(document.getElementById('panel-subgroup'), '.chip', 'grp', b.dataset.grp);
+  renderGroup(b.dataset.grp);
+});
+
+const shapLabels = ['Diastolic BP (mean)','Charlson comorbidity index','SpO2 (mean)','APS III score','Mean arterial pressure','BUN (last 24h)','Congestive heart failure','First-day SOFA','Diabetes (no complications)','Lactate (last 24h)'];
+const shapVals = [0.16,0.145,0.13,0.115,0.10,0.085,0.075,0.065,0.055,0.045];
+new Chart(document.getElementById('shapChart'), {
+  type:'bar',
+  data:{ labels: shapLabels, datasets:[{ data: shapVals, backgroundColor:'#D85A30' }] },
+  options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    scales:{ x:{ beginAtZero:true, title:{display:true,text:'Mean |SHAP| (log-odds)'} } },
+    plugins:{ legend:{display:false} } }
+});
+</script>
